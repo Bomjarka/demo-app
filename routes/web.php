@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JsonController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::prefix('json')->group(function () {
+    Route::get('/', [JsonController::class, 'index'])->name('indexJson');
+    Route::post('/add', [JsonController::class, 'addJson'])->name('addJson');
+    Route::post('/update', [JsonController::class, 'updateJson'])->name('updateJson');
 });
