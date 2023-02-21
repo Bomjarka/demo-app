@@ -20,6 +20,8 @@ Route::get('/', function () {
 
 Route::prefix('json')->group(function () {
     Route::get('/', [JsonController::class, 'index'])->name('indexJson');
+    Route::get('/{jsonModel}', [JsonController::class, 'json'])->name('getJson');
+    Route::get('/delete/{jsonModel}', [JsonController::class, 'deleteJson'])->name('deleteJson');
     Route::post('/add', [JsonController::class, 'addJson'])->name('addJson');
     Route::post('/update', [JsonController::class, 'updateJson'])->name('updateJson');
 });
