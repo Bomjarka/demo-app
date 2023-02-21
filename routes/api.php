@@ -19,6 +19,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/addJson', [JsonController::class, 'addJson'])->name('addJsonAPI');
+Route::any('/addJson', [JsonController::class, 'addJson'])->name('addJsonAPI');
 
-Route::post('/updateJson', [JsonController::class, 'updateJson'])->name('updateJsonAPI');
+Route::any('/updateJson', [JsonController::class, 'updateJson'])->name('updateJsonAPI');
