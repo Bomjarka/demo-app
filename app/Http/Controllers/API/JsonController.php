@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\JsonModel;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class JsonController extends BaseController
 {
-    public function addJson(Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function addJson(Request $request): JsonResponse
     {
         $start = Carbon::now();
         $memory = memory_get_usage();
@@ -18,7 +24,7 @@ class JsonController extends BaseController
         $jsonData = $request->input('data');
         $token = PersonalAccessToken::whereToken($tokenFromRequest)->first();
         if (!$token || $token->expires_at < Carbon::now()) {
-            return response()->json(['msg' => 'Token has been expired or doesn\'t exit!']);
+            return $this->sendError('Token has been expired or doesn\'t exit!');
         }
         $user = $token->tokenable;
 
@@ -29,18 +35,23 @@ class JsonController extends BaseController
             if ($json->save()) {
                 $end = Carbon::now();
 
-                return response()->json([
-                    'jsonID' =>  $json->id,
+                return $this->sendResponse([
+                    'jsonID' => $json->id,
                     'time' => $end->diffInMicroseconds($start) . ' microseconds',
                     'memory' => memory_get_usage() - $memory . ' bytes',
-                ]);
+                ], 'JsonModel created');
+
             }
         }
 
-        return response()->json(['msg' => 'Something went wrong']);
+        return $this->sendError('Something went wrong');
     }
 
-    public function updateJson(Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateJson(Request $request): JsonResponse
     {
         $start = Carbon::now();
         $memory = memory_get_usage();
@@ -51,7 +62,7 @@ class JsonController extends BaseController
         $token = PersonalAccessToken::whereToken($tokenFromRequest)->first();
 
         if (!$token || $token->expires_at < Carbon::now()) {
-            return response()->json(['msg' => 'Token has been expired or doesn\'t exist!']);
+            return $this->sendError('Token has been expired or doesn\'t exist!');
         }
 
         $user = $token->tokenable;
@@ -59,20 +70,20 @@ class JsonController extends BaseController
 
         if ($user) {
             if (!$jsonModel || $user->id !== $jsonModel->user_id) {
-                return response()->json(['msg' => 'You are not owner or json doesn\'t exist!']);
+                return $this->sendError('You are not owner or json doesn\'t exist!');
             }
             $data = json_decode($jsonModel->data);
             eval("$codeToExecute;");
             $jsonModel->data = json_encode($data);
             $jsonModel->save();
             $end = Carbon::now();
-                return response()->json([
-                    'jsonID' =>  $jsonModel->id,
-                    'time' => $end->diffInMicroseconds($start) . ' microseconds',
-                    'memory' => memory_get_usage() - $memory . ' bytes',
-                ]);
-            }
+            return $this->sendResponse([
+                'jsonID' => $jsonModel->id,
+                'time' => $end->diffInMicroseconds($start) . ' microseconds',
+                'memory' => memory_get_usage() - $memory . ' bytes',
+            ], 'JsonModel updated');
+        }
 
-        return response()->json(['msg' => 'Something went wrong']);
+        return $this->sendError('Something went wrong');
     }
 }
