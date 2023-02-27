@@ -13,7 +13,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <!-- Styles -->
-    <style></style>
+    <style>
+        li:hover {
+            color: green;
+        }
+    </style>
 </head>
 @if(\Illuminate\Support\Facades\Session::has('success'))
     <h1 style="color: green">{!! \Session::get('success') !!}</h1>{
@@ -27,16 +31,32 @@
 <h4>JsonModel Created By: {{ $jsonModel->user->name }}</h4>
 <h4>JsonModel Created : {{ $jsonModel->created_at }}</h4>
 <h4>JsonModel Data:</h4>
-<ul class="list-group">
+
     @foreach($data as $key => $value)
         @if (is_array($value))
-            @include('partials', ['arr' => $value])
+            <ul>@include('partials', ['arr' => $value])</ul>
         @else
             <li>{{ $key }} : {{ $value }}</li>
         @endif
     @endforeach
-</ul>
+
 </body>
 </table>
 </body>
 </html>
+
+
+<script>
+    let visible = true;
+    $('.parent').on('click', function () {
+        console.log(visible);
+        if (visible == true) {
+            $(this).parent().children().hide();
+            $(this).show();
+            visible = false;
+        } else if (visible == false) {
+            $(this).parent().children().show();
+            visible = true;
+        }
+    });
+</script>

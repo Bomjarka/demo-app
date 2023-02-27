@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use http\Client\Curl\User;
 use Illuminate\Console\Command;
 
 class TestCommand extends Command
