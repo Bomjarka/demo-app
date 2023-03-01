@@ -36,7 +36,7 @@ class GenerateTokenByLogin extends Command
         $user = ProjectUser::whereLogin($login)->first();
 
         if ($user && Hash::check($password, $user->password)) {
-            $tokenExpiresAt = Carbon::now()->addMinutes((int) config('sanctum.expiration'));
+            $tokenExpiresAt = Carbon::now()->addMinutes((int) config('tokens.lifetime'));
             $user->createToken('testtoken', [], $tokenExpiresAt);
             $this->info('Token successfully created for user - ' . $user->name);
         } else {
